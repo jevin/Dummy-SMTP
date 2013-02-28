@@ -5,6 +5,7 @@
 import smtpd
 import asyncore
 import time
+from email.parser import Parser
 
 class FakeSMTPServer(smtpd.SMTPServer):
     """A Fake smtp server"""
@@ -14,8 +15,9 @@ class FakeSMTPServer(smtpd.SMTPServer):
         smtpd.SMTPServer.__init__(*args, **kwargs)
 
     def process_message(*args, **kwargs):
+        headers = Parser().parsestr(args[4])
         mail = open("mails/"+str(time.time())+".eml", "w")
-        print "New mail from " + args[2]
+        print "New mail from " + headers['from'] + " to " + headers['to'] + " - " + headers['subject']
         mail.write(args[4])
         mail.close
         pass
