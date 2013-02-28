@@ -5,6 +5,7 @@
 import smtpd
 import asyncore
 import time
+import socket
 from email.parser import Parser
 
 class FakeSMTPServer(smtpd.SMTPServer):
@@ -23,7 +24,11 @@ class FakeSMTPServer(smtpd.SMTPServer):
         pass
 
 if __name__ == "__main__":
-    smtp_server = FakeSMTPServer(('localhost', 25), None)
+    try:
+        smtp_server = FakeSMTPServer(('localhost', 25), None)
+    except socket.error:
+        print "Permission denied to port 25. Try using sudo."
+
     try:
         asyncore.loop()
     except KeyboardInterrupt:
