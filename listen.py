@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Original script written by Stuart Colville: http://muffinresearch.co.uk/archives/2010/10/15/fake-smtp-server-with-python/
 """A noddy fake smtp server."""
+import os
 import sys
 import smtpd
 import asyncore
@@ -10,12 +11,13 @@ class FakeSMTPServer(smtpd.SMTPServer):
     """A Fake smtp server"""
 
     def __init__(*args, **kwargs):
-        print "Running fake smtp server on " + str(locals()['args'][1][0]) + ":" + str(locals()['args'][1][1])
+        print "Running fake smtp server on smtp://" + str(locals()['args'][1][0]) + ":" + str(locals()['args'][1][1])
         smtpd.SMTPServer.__init__(*args, **kwargs)
 
     def process_message(*args, **kwargs):
-        mail = open("mails/"+str(time.time())+".eml", "w")
-        print "New mail from " + args[2]
+        fileLoc = os.path.dirname(__file__)+"/mails/"+str(time.time())+".eml"
+        mail = open(fileLoc, "w")
+        print "New mail from " + args[2] + " => " + fileLoc
         mail.write(args[4])
         mail.close
         pass
